@@ -20,3 +20,7 @@ Resources:
         -
           Key: "Name"
           Value: "Announcements"
+Outputs:
+  TableName:
+    Value:
+      Ref: AnnouncementTable
