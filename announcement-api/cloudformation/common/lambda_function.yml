@@ -1,15 +1,26 @@
 AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  FunctionName:
+    Type: String
+  FunctionHandler:
+    Type: String
+  FunctionRoleArn:
+    Type: String
+  S3Key:
+    Type: String
+  S3Bucket:
+    Type: String
 Resources:
   LambdaFunction:
     Type: AWS::Lambda::Function
     Properties: 
       Code: 
-        S3Bucket: "sidharthramesh"
-        S3Key: "PutAnnouncement.zip"
+        S3Bucket: !Ref S3Bucket
+        S3Key: !Ref S3Key
       Description: "lambda function created using cloudformation"
-      FunctionName: "sample_lambda_function_cloud_formation"
-      Handler: "PutAnnouncement.lambda_handler"
-      Role: "arn:aws:iam::010381976707:role/lambda-role-for-sqs-dynamodb-ec2"
+      FunctionName: !Ref FunctionName
+      Handler: !Ref FunctionHandler
+      Role: !Ref FunctionRoleArn
       Runtime: "python3.6"
       Tags: 
         -

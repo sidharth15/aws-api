@@ -8,3 +8,9 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/lambda_function.yml"
+      Parameters:
+        FunctionName: "put-announcements-function"
+        FunctionHandler: "PutAnnouncement.lambda_handler"
+        FunctionRoleArn: "arn:aws:iam::010381976707:role/lambda-role-for-sqs-dynamodb-ec2"
+        S3Bucket: "sidharthramesh"
+        S3Key: "PutAnnouncement.zip"
