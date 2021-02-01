@@ -44,6 +44,15 @@ Resources:
         PassthroughBehavior: WHEN_NO_TEMPLATES
         RequestTemplates:
           "application/json": "#set($inputRoot = $input.path('$')) { \"title\" : \"$inputRoot.title\", \"date\" : \"$inputRoot.date\"}"
+        IntegrationResponses:
+          - ResponseTemplates:
+              "application/json": ""
+            StatusCode: 200
+      MethodResponses:
+        - 
+          ResponseModels:
+            "application/json": Empty
+          StatusCode: 200
 
   ApiGatewayLambdaInvokePermission:
     Type: AWS::Lambda::Permission
