@@ -29,3 +29,25 @@ Resources:
       RestApiId: !Ref PutAnnouncementAPI
       ParentId: !GetAtt PutAnnouncementAPI.RootResourceId
       PathPart: announcement
+  
+  AnnouncementPostMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref AnnouncementResource
+      RestApiId: !Ref PutAnnouncementAPI
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Join [ "", [ "arn:aws:apigateway:", !Ref "AWS::Region", ":lambda:path/2015-03-31/functions/", "arn:aws:lambda:eu-west-1:010381976707:function:put-announcements-function", "/invocations" ] ]
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": "#set($inputRoot = $input.path('$')) { \"title\" : \"$inputRoot.title\", \"date\" : \"$inputRoot.date\"}"
+
+  ApiGatewayLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:invokeFunction
+      FunctionName: put-announcements-function
+      Principal: apigateway.amazonaws.com
