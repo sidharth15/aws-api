@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  PutAnnouncementAPI:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "PutAnnouncement API"
+      Description: "Api created using cloudformation"
+
+  PutAnnouncementModel:
+      Type: "AWS::ApiGateway::Model"
+      Properties:
+        ContentType: "application/json"
+        Name: "PutAnnouncementModel"
+        RestApiId: !Ref PutAnnouncementAPI
+        Schema:
+          $schema: "http://json-schema.org/draft-04/schema#"
+          title: PutAnnouncementModel
+          type: object
+          additionalProperties: false
+          properties:
+            title:
+              type: string
+            date:
+              type: string
+
+  AnnouncementResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref PutAnnouncementAPI
+      ParentId: !GetAtt PutAnnouncementAPI.RootResourceId
+      PathPart: announcement
