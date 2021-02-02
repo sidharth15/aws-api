@@ -27,3 +27,8 @@ Resources:
           Key: "Name"
           Value: "Sample lambda function"
       Timeout: 3
+Outputs:
+  FunctionArn:
+    Value: !GetAtt LambdaFunction.Arn
+  FunctionName:
+    Value: !Ref LambdaFunction

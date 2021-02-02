@@ -1,4 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  LambdaFunctionName:
+    Type: String
+  LambdaFunctionArn:
+    Type: String
 Resources:
   PutAnnouncementAPI:
     Type: "AWS::ApiGateway::RestApi"
@@ -7,21 +12,21 @@ Resources:
       Description: "Api created using cloudformation"
 
   PutAnnouncementModel:
-      Type: "AWS::ApiGateway::Model"
-      Properties:
-        ContentType: "application/json"
-        Name: "PutAnnouncementModel"
-        RestApiId: !Ref PutAnnouncementAPI
-        Schema:
-          $schema: "http://json-schema.org/draft-04/schema#"
-          title: PutAnnouncementModel
-          type: object
-          additionalProperties: false
-          properties:
-            title:
-              type: string
-            date:
-              type: string
+    Type: "AWS::ApiGateway::Model"
+    Properties:
+      ContentType: "application/json"
+      Name: "PutAnnouncementModel"
+      RestApiId: !Ref PutAnnouncementAPI
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: PutAnnouncementModel
+        type: object
+        additionalProperties: false
+        properties:
+          title:
+            type: string
+          date:
+            type: string
 
   MethodResponseModel:
     Type: "AWS::ApiGateway::Model"
@@ -57,7 +62,7 @@ Resources:
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
-        Uri: !Join [ "", [ "arn:aws:apigateway:", !Ref "AWS::Region", ":lambda:path/2015-03-31/functions/", "arn:aws:lambda:eu-west-1:010381976707:function:put-announcements-function", "/invocations" ] ]
+        Uri: !Join [ "", [ "arn:aws:apigateway:", !Ref "AWS::Region", ":lambda:path/2015-03-31/functions/", !Ref LambdaFunctionArn, "/invocations" ] ]
         PassthroughBehavior: WHEN_NO_TEMPLATES
         RequestTemplates:
           "application/json": "#set($inputRoot = $input.path('$')) { \"title\" : \"$inputRoot.title\", \"date\" : \"$inputRoot.date\"}"
@@ -75,5 +80,5 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties: 
       Action: lambda:invokeFunction
-      FunctionName: put-announcements-function
+      FunctionName: !Ref LambdaFunctionName
       Principal: apigateway.amazonaws.com

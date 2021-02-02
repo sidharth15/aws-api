@@ -1,11 +1,11 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Resources:
-  DatabaseStack:
+  AnnouncementsTable:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/db.yml"
   
-  LambdaFunctionStack:
+  PutAnnouncementLambdaFunction:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/lambda_function.yml"
@@ -15,3 +15,18 @@ Resources:
         FunctionRoleArn: "arn:aws:iam::010381976707:role/lambda-role-for-sqs-dynamodb-ec2"
         S3Bucket: "sidharthramesh"
         S3Key: "PutAnnouncement.zip"
+
+  PutAnnouncementApi:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/api.yml"
+      Parameters:
+        LambdaFunctionName: 
+          Fn::GetAtt:
+            - PutAnnouncementLambdaFunction
+            - Outputs.FunctionName
+        LambdaFunctionArn:
+          Fn::GetAtt:
+            - PutAnnouncementLambdaFunction
+            - Outputs.FunctionArn
+    
