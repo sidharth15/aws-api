@@ -23,6 +23,23 @@ Resources:
             date:
               type: string
 
+  MethodResponseModel:
+    Type: "AWS::ApiGateway::Model"
+    Properties:
+      ContentType: "application/json"
+      Name: "MethodResponseModel"
+      RestApiId: !Ref PutAnnouncementAPI
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: MethodResponseModel
+        type: object
+        additionalProperties: false
+        properties:
+          status:
+            type: string
+          message:
+            type: string
+
   AnnouncementResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -46,12 +63,12 @@ Resources:
           "application/json": "#set($inputRoot = $input.path('$')) { \"title\" : \"$inputRoot.title\", \"date\" : \"$inputRoot.date\"}"
         IntegrationResponses:
           - ResponseTemplates:
-              "application/json": ""
+              "application/json": "#set($inputRoot = $input.path('$')){\"statusCode\" : \"$inputRoot.status\",\"messageFromLambda\" : \"$inputRoot.message\"}"
             StatusCode: 200
       MethodResponses:
         - 
           ResponseModels:
-            "application/json": Empty
+            "application/json": !Ref MethodResponseModel
           StatusCode: 200
 
   ApiGatewayLambdaInvokePermission:
