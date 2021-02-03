@@ -3,12 +3,12 @@ Resources:
   AnnouncementsTable:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/db.yml"
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/db.cfn.yaml"
   
   PutAnnouncementLambdaFunction:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/lambda_function.yml"
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/lambda_function.cfn.yaml"
       Parameters:
         FunctionName: "put-announcements-function"
         FunctionHandler: "PutAnnouncement.lambda_handler"
@@ -19,7 +19,7 @@ Resources:
   PutAnnouncementApi:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/api.yml"
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/api.cfn.yaml"
       Parameters:
         LambdaFunctionName: 
           Fn::GetAtt:
