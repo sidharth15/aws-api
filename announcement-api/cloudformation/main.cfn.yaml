@@ -8,7 +8,7 @@ Resources:
   PutAnnouncementLambdaFunction:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/lambda_function.cfn.yaml"
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/common/lambda_function.cfn.yaml"
       Parameters:
         FunctionName: "put-announcements-function"
         FunctionHandler: "PutAnnouncement.lambda_handler"
