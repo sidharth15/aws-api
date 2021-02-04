@@ -25,8 +25,11 @@ Resources:
         properties:
           title:
             type: string
+            minLength: 1
           date:
             type: string
+            minLength: 1
+        required: ["title", "date"]
 
   MethodResponseModel:
     Type: "AWS::ApiGateway::Model"
@@ -59,6 +62,9 @@ Resources:
       ResourceId: !Ref AnnouncementResource
       RestApiId: !Ref PutAnnouncementAPI
       AuthorizationType: NONE
+      RequestModels:
+        "application/json": !Ref PutAnnouncementModel
+      RequestValidatorId: !Ref PutAnnouncementRequestValidator
       Integration:
         Type: AWS
         IntegrationHttpMethod: POST
@@ -75,6 +81,13 @@ Resources:
           ResponseModels:
             "application/json": !Ref MethodResponseModel
           StatusCode: 200
+  
+  PutAnnouncementRequestValidator:
+    Type: "AWS::ApiGateway::RequestValidator"
+    Properties:
+      Name: put-announcement-request-validator
+      RestApiId: !Ref PutAnnouncementAPI
+      ValidateRequestBody: true
 
   ApiGatewayLambdaInvokePermission:
     Type: AWS::Lambda::Permission
