@@ -29,4 +29,11 @@ Resources:
           Fn::GetAtt:
             - PutAnnouncementLambdaFunction
             - Outputs.FunctionArn
-    
+
+Outputs:
+  EndpointUrl:
+    Description: "Endpoint URL exposed by API Gateway"
+    Value: 
+      Fn::GetAtt:
+        - PutAnnouncementApi
+        - Outputs.ApiUrl

@@ -89,7 +89,7 @@ Resources:
       RestApiId: !Ref PutAnnouncementAPI
       ValidateRequestBody: true
 
-  PutAnnouncmentApiStage:
+  PutAnnouncementApiStage:
     Type: "AWS::ApiGateway::Stage"
     Properties:
       DeploymentId: !Ref PutAnnouncementAPIDeployment
@@ -102,6 +102,7 @@ Resources:
     Properties:
       Description: "PutAnnouncementAPI Deployment"
       RestApiId: !Ref PutAnnouncementAPI
+    DependsOn: AnnouncementPostMethod
 
   ApiGatewayLambdaInvokePermission:
     Type: AWS::Lambda::Permission
@@ -109,3 +110,8 @@ Resources:
       Action: lambda:invokeFunction
       FunctionName: !Ref LambdaFunctionName
       Principal: apigateway.amazonaws.com
+
+Outputs:
+  ApiUrl:
+    Description: "The endpoint URL exposed by API Gateway"
+    Value: !Sub "https://${PutAnnouncementAPI}.execute-api.${AWS::Region}.amazonaws.com/${PutAnnouncementApiStage}"
