@@ -89,6 +89,20 @@ Resources:
       RestApiId: !Ref PutAnnouncementAPI
       ValidateRequestBody: true
 
+  PutAnnouncmentApiStage:
+    Type: "AWS::ApiGateway::Stage"
+    Properties:
+      DeploymentId: !Ref PutAnnouncementAPIDeployment
+      Description: "Develop stage created in CloudFormation"
+      RestApiId: !Ref PutAnnouncementAPI
+      StageName: "develop"
+  
+  PutAnnouncementAPIDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    Properties:
+      Description: "PutAnnouncementAPI Deployment"
+      RestApiId: !Ref PutAnnouncementAPI
+
   ApiGatewayLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties: 
