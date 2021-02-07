@@ -16,7 +16,7 @@ announcementTable = dynamo.Table(ANNOUNCEMENT_TABLE_NAME)
 # method to parse the event input
 # and retrieve a start key for continuing scan
 def parse_event(event):
-    if PAGINATION_TOKEN in event:
+    if event[PAGINATION_TOKEN]:
         return {
             ID_ATTRIBUTE: event[PAGINATION_TOKEN]
         }
@@ -49,10 +49,10 @@ def build_response(statusCode, message, scanResult = None):
     
 def lambda_handler(event, context):
     print("Handling event:", event)
-    
     startKey = parse_event(event)
-    
+
     if startKey:
+        print('using pagination_token: ', startKey)
         
         if not is_startKey_valid(startKey):
             response = build_response(
@@ -60,6 +60,8 @@ def lambda_handler(event, context):
                 message="Invalid pagination_token"
                 )
         else:
+            print('pagination_token is valid')
+            
             scanResult = announcementTable.scan(
                     Limit=1,
                     ExclusiveStartKey=startKey
@@ -71,6 +73,8 @@ def lambda_handler(event, context):
                 scanResult=scanResult
                 )
     else:
+        print('no pagination_token')
+        
         scanResult = announcementTable.scan(Limit=1)
         response = build_response(
             statusCode=200,
