@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  LambdaFunctionName:
+    Type: String
+  LambdaFunctionArn:
+    Type: String
+Resources:
+  ListAnnouncementsAPI:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "ListAnnouncements API"
+      Description: "Api created using cloudformation"
+
+  AnnouncementsResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref ListAnnouncementsAPI
+      ParentId: !GetAtt ListAnnouncementsAPI.RootResourceId
+      PathPart: announcements
+    
+  AnnouncementsGetMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      HttpMethod: GET
+      ResourceId: !Ref AnnouncementsResource
+      RestApiId: !Ref ListAnnouncementsAPI
+      AuthorizationType: NONE
+      RequestParameters:
+        method.request.querystring.pagination_token: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: GET
+        Uri: !Join [ "", [ "arn:aws:apigateway:", !Ref "AWS::Region", ":lambda:path/2015-03-31/functions/", !Ref LambdaFunctionArn, "/invocations" ] ]
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": "{ \"pagination_token\" : \"$inputRoot.params('pagination_token')\" }"
+
+  ApiGatewayLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:invokeFunction
+      FunctionName: !Ref LambdaFunctionName
+      Principal: apigateway.amazonaws.com
