@@ -4,6 +4,37 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/db.cfn.yaml"
+
+  LambdaFunctionIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: DynamoDbCloudWatchAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents" 
+                Resource: '*'
+              
+              - Effect: Allow
+                Action: "dynamodb:*"
+                Resource: "*"
+      RoleName: LambdaToDynamoDbAccessRole
   
   PutAnnouncementLambdaFunction:
     Type: AWS::CloudFormation::Stack
@@ -12,7 +43,7 @@ Resources:
       Parameters:
         FunctionName: "put-announcements-function"
         FunctionHandler: "PutAnnouncement.lambda_handler"
-        FunctionRoleArn: "arn:aws:iam::010381976707:role/lambda-role-for-sqs-dynamodb-ec2"
+        FunctionRoleArn: !GetAtt LambdaFunctionIAMRole.Arn
         S3Bucket: "sidharthramesh"
         S3Key: "PutAnnouncement.zip"
 
@@ -37,7 +68,7 @@ Resources:
       Parameters:
         FunctionName: "list_announcements"
         FunctionHandler: "ListAnnouncements.lambda_handler"
-        FunctionRoleArn: "arn:aws:iam::010381976707:role/lambda-role-for-sqs-dynamodb-ec2"
+        FunctionRoleArn: !GetAtt LambdaFunctionIAMRole.Arn
         S3Bucket: "sidharthramesh"
         S3Key: "ListAnnouncements.zip"
     
