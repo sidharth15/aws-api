@@ -9,6 +9,7 @@ PAGINATION_TOKEN = "pagination_token"
 TITLE_ATTRIBUTE = "title"
 DATE_ATTRIBUTE = "date"
 ID_ATTRIBUTE = "AnnouncementId"
+MAX_ITEMS_LIMIT = 5
 
 dynamo = boto3.resource('dynamodb')
 announcementTable = dynamo.Table(ANNOUNCEMENT_TABLE_NAME)
@@ -64,7 +65,7 @@ def lambda_handler(event, context):
             print('pagination_token is valid')
             
             scanResult = announcementTable.scan(
-                    Limit=1,
+                    Limit=MAX_ITEMS_LIMIT,
                     ExclusiveStartKey=startKey
                 )
             
@@ -76,7 +77,7 @@ def lambda_handler(event, context):
     else:
         print('no pagination_token')
         
-        scanResult = announcementTable.scan(Limit=1)
+        scanResult = announcementTable.scan(Limit=MAX_ITEMS_LIMIT)
         response = build_response(
             statusCode=200,
             message="SUCCESS",
