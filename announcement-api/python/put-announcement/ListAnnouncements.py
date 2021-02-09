@@ -49,6 +49,7 @@ def build_response(statusCode, message, scanResult = None):
     
 def lambda_handler(event, context):
     print("Handling event:", event)
+    
     startKey = parse_event(event)
 
     if startKey:
