@@ -29,11 +29,43 @@ Resources:
           Fn::GetAtt:
             - PutAnnouncementLambdaFunction
             - Outputs.FunctionArn
+    
+  ListAnnouncementsLambdaFunction:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/common/lambda_function.cfn.yaml"
+      Parameters:
+        FunctionName: "list_announcements"
+        FunctionHandler: "ListAnnouncements.lambda_handler"
+        FunctionRoleArn: "arn:aws:iam::010381976707:role/lambda-role-for-sqs-dynamodb-ec2"
+        S3Bucket: "sidharthramesh"
+        S3Key: "ListAnnouncements.zip"
+    
+  ListAnnouncementsAPI:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/list_announcements_api.cfn.yaml"
+      Parameters:
+        LambdaFunctionName: 
+          Fn::GetAtt:
+            - ListAnnouncementsLambdaFunction
+            - Outputs.FunctionName
+        LambdaFunctionArn:
+          Fn::GetAtt:
+            - ListAnnouncementsLambdaFunction
+            - Outputs.FunctionArn
 
 Outputs:
-  EndpointUrl:
-    Description: "Endpoint URL exposed by API Gateway"
+  PutAnnouncementEndpointURL:
+    Description: "Endpoint URL for put-announcement API exposed by API Gateway"
     Value: 
       Fn::GetAtt:
         - PutAnnouncementApi
+        - Outputs.ApiUrl
+
+  ListAnnouncementsEndpointURL:
+    Description: "Endpoint URL for list-announcements API exposed by API Gateway"
+    Value: 
+      Fn::GetAtt:
+        - ListAnnouncementsAPI
         - Outputs.ApiUrl

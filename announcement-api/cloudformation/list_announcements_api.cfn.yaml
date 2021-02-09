@@ -92,9 +92,29 @@ Resources:
             type: string
         required: [status, message]
 
+  ListAnnouncementsApiStage:
+    Type: "AWS::ApiGateway::Stage"
+    Properties:
+      DeploymentId: !Ref ListAnnouncementsAPIDeployment
+      Description: "Develop stage created in CloudFormation"
+      RestApiId: !Ref ListAnnouncementsAPI
+      StageName: "develop"
+  
+  ListAnnouncementsAPIDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    Properties:
+      Description: "ListAnnouncementsAPI Deployment"
+      RestApiId: !Ref ListAnnouncementsAPI
+    DependsOn: AnnouncementsGetMethod
+
   ApiGatewayLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties: 
       Action: lambda:invokeFunction
       FunctionName: !Ref LambdaFunctionName
       Principal: apigateway.amazonaws.com
+
+Outputs:
+  ApiUrl:
+    Description: "The endpoint URL exposed by API Gateway"
+    Value: !Sub "https://${ListAnnouncementsAPI}.execute-api.${AWS::Region}.amazonaws.com/${ListAnnouncementsApiStage}"
