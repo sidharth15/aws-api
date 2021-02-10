@@ -7,7 +7,7 @@ Resources:
         S3Bucket: "sidharthramesh"
         S3Key: "ErrorReporting.zip"
       Description: "Error reporting lambda function - sends out email alerts to users through SNS"
-      FunctionName: "error_reporting_function"
+      FunctionName: "error_reporting"
       Handler: "ErrorReporting.lambda_handler"
       Role: !GetAtt LambdaFunctionIAMRole.Arn
       Runtime: "python3.6"
@@ -39,6 +39,12 @@ Resources:
                   - "logs:PutLogEvents" 
                 Resource: '*'
       RoleName: ErrorParsingLambdaRole
+
+  ErrorReportingLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ["/", ["/aws/lambda", !Ref ErrorReportingLambdaFunction]]
+      RetentionInDays: 7
   
 Outputs:
   ErrorReportingLambdaFunctionArn:

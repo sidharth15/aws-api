@@ -41,7 +41,7 @@ Resources:
     Properties:
       TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/common/lambda_function.cfn.yaml"
       Parameters:
-        FunctionName: "put-announcements-function"
+        FunctionName: "put_announcements"
         FunctionHandler: "PutAnnouncement.lambda_handler"
         FunctionRoleArn: !GetAtt LambdaFunctionIAMRole.Arn
         S3Bucket: "sidharthramesh"
