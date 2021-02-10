@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  ErrorReportingLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties: 
+      Code: 
+        S3Bucket: "sidharthramesh"
+        S3Key: "ErrorReporting.zip"
+      Description: "Error reporting lambda function - sends out email alerts to users through SNS"
+      FunctionName: "error_reporting_function"
+      Handler: "ErrorReporting.lambda_handler"
+      Role: !GetAtt LambdaFunctionIAMRole.Arn
+      Runtime: "python3.6"
+      Timeout: 3
+
+  LambdaFunctionIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: LoggingAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents" 
+                Resource: '*'
+      RoleName: ErrorParsingLambdaRole
+  
+Outputs:
+  ErrorReportingLambdaFunctionArn:
+    Value: !GetAtt ErrorReportingLambdaFunction.Arn
+  ErrorReportingLambdaFunctionName:
+    Value: !Ref ErrorReportingLambdaFunction

@@ -46,6 +46,19 @@ Resources:
         FunctionRoleArn: !GetAtt LambdaFunctionIAMRole.Arn
         S3Bucket: "sidharthramesh"
         S3Key: "PutAnnouncement.zip"
+        ErrorReportingLambdaFunctionArn:
+          Fn::GetAtt:
+            - ErrorReportingStack
+            - Outputs.ErrorReportingLambdaFunctionArn
+        ErrorReportingLambdaFunctionName:
+          Fn::GetAtt:
+            - ErrorReportingStack
+            - Outputs.ErrorReportingLambdaFunctionName
+
+  ErrorReportingStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/error_reporting.cfn.yaml"
 
   PutAnnouncementApi:
     Type: AWS::CloudFormation::Stack
@@ -71,6 +84,14 @@ Resources:
         FunctionRoleArn: !GetAtt LambdaFunctionIAMRole.Arn
         S3Bucket: "sidharthramesh"
         S3Key: "ListAnnouncements.zip"
+        ErrorReportingLambdaFunctionArn:
+          Fn::GetAtt:
+            - ErrorReportingStack
+            - Outputs.ErrorReportingLambdaFunctionArn
+        ErrorReportingLambdaFunctionName:
+          Fn::GetAtt:
+            - ErrorReportingStack
+            - Outputs.ErrorReportingLambdaFunctionName
     
   ListAnnouncementsAPI:
     Type: AWS::CloudFormation::Stack

@@ -10,6 +10,11 @@ Parameters:
     Type: String
   S3Bucket:
     Type: String
+  ErrorReportingLambdaFunctionArn:
+    Type: String
+  ErrorReportingLambdaFunctionName:
+    Type: String
+
 Resources:
   LambdaFunction:
     Type: AWS::Lambda::Function
@@ -33,8 +38,26 @@ Resources:
     Properties:
       LogGroupName: !Join ["/", ["/aws/lambda", !Ref FunctionName]]
       RetentionInDays: 7
+
+  ErrorReportingSubscription:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: !Ref ErrorReportingLambdaFunctionArn
+      FilterPattern: "?ERROR"
+      LogGroupName: !Ref LogGroup
+
+  ErrorReportingLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:invokeFunction
+      FunctionName: !Ref ErrorReportingLambdaFunctionName
+      Principal: logs.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !GetAtt LogGroup.Arn
 Outputs:
   FunctionArn:
     Value: !GetAtt LambdaFunction.Arn
   FunctionName:
     Value: !Ref LambdaFunction
+  LogGroupArn:
+    Value: !GetAtt LogGroup.Arn
