@@ -27,6 +27,12 @@ Resources:
           Key: "Name"
           Value: "Sample lambda function"
       Timeout: 3
+  
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ["/", ["/aws/lambda", !Ref FunctionName]]
+      RetentionInDays: 7
 Outputs:
   FunctionArn:
     Value: !GetAtt LambdaFunction.Arn
