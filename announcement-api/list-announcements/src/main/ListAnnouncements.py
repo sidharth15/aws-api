@@ -19,10 +19,8 @@ announcementTable = dynamo.Table(ANNOUNCEMENT_TABLE_NAME)
 # method to parse the event input
 # and retrieve a start key for continuing scan
 def parse_event(event):
-    if event[PAGINATION_TOKEN]:
-        return {
-            ID_ATTRIBUTE: event[PAGINATION_TOKEN]
-        }
+    if event[PAGINATION_TOKEN].strip():
+        return { ID_ATTRIBUTE: event[PAGINATION_TOKEN] }
 
 # determines if pagination_token provided is valid
 # by checking if item with provided primary key exists in the table
