@@ -41,6 +41,9 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents" 
                 Resource: '*'
+              - Effect: Allow
+                Action: "SNS:Publish"
+                Resource: !Ref ErrorReportingSnsTopic
       RoleName: ErrorParsingLambdaRole
 
   ErrorReportingLogGroup:
