@@ -12,6 +12,9 @@ Resources:
       Role: !GetAtt LambdaFunctionIAMRole.Arn
       Runtime: "python3.6"
       Timeout: 3
+      Environment:
+        Variables:
+          snsARN: !Ref ErrorReportingSnsTopic
 
   LambdaFunctionIAMRole:
     Type: AWS::IAM::Role
@@ -45,6 +48,19 @@ Resources:
     Properties:
       LogGroupName: !Join ["/", ["/aws/lambda", !Ref ErrorReportingLambdaFunction]]
       RetentionInDays: 7
+
+  ErrorReportingSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: "Error Reporting SNS Topic"
+      TopicName: "error_reporting_topic"
+  
+  SnsTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: "sidharthr44@gmail.com"
+      Protocol: "email"
+      TopicArn: !Ref ErrorReportingSnsTopic
   
 Outputs:
   ErrorReportingLambdaFunctionArn:

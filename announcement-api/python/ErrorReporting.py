@@ -64,4 +64,4 @@ def lambda_handler(event, context):
     pload = logpayload(event)
     lgroup, lstream, errmessage, lambdaname = error_details(pload)
     print("group:", lgroup, "stream:", lstream, "error message", errmessage, "lambdaname:", lambdaname)
-    # publish_message(lgroup, lstream, errmessage, lambdaname)
+    publish_message(lgroup, lstream, errmessage, lambdaname)
