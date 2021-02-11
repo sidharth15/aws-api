@@ -4,6 +4,8 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/db.cfn.yaml"
+      Parameters:
+        TableName: "announcements"
 
   LambdaFunctionIAMRole:
     Type: AWS::IAM::Role

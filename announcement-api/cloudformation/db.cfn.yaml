@@ -1,4 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  TableName:
+    Type: String
 Resources:
   AnnouncementTable:
     Type: AWS::DynamoDB::Table
@@ -15,11 +18,11 @@ Resources:
       ProvisionedThroughput: 
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
-      TableName: "announcements"
+      TableName: !Ref TableName
       Tags: 
         -
           Key: "Name"
-          Value: "Announcements"
+          Value: !Ref TableName
 Outputs:
   TableName:
     Value:
