@@ -1,0 +1,53 @@
+openapi: "3.0.1"
+info:
+  title: "ListAnnouncements API"
+  description: "Api created using cloudformation"
+  version: "2021-02-11T08:40:47Z"
+servers:
+- url: "https://3jbdp30a9b.execute-api.eu-west-1.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: "/develop"
+paths:
+  /announcements:
+    get:
+      parameters:
+      - name: "pagination_token"
+        in: "query"
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponseModel"
+components:
+  schemas:
+    SuccessResponseModel:
+      title: "SuccessResponseModel"
+      required:
+      - "message"
+      - "status"
+      type: "object"
+      properties:
+        pagination_token:
+          type: "string"
+        message:
+          type: "string"
+        announcements:
+          type: "array"
+          items:
+            required:
+            - "date"
+            - "title"
+            type: "object"
+            properties:
+              date:
+                type: "string"
+              title:
+                type: "string"
+        status:
+          type: "string"
+      additionalProperties: false
