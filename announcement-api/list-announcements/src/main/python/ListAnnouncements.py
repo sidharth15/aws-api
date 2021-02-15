@@ -2,6 +2,7 @@ import json
 import uuid
 import boto3
 import logging
+from custom_errors import InputError
 
 ANNOUNCEMENT_TABLE_NAME = "announcements"
 PAGINATION_TOKEN = "pagination_token"
@@ -55,10 +56,7 @@ def handle_event(event):
     if startKey:
         logger.debug('using pagination_token: ' + str(startKey))
         if not is_startKey_valid(startKey):
-            response = build_response(
-                statusCode=400, 
-                message="Invalid pagination_token"
-                )
+            raise InputError('Invalid pagination_token')
         else:
             logger.debug('pagination_token is valid')
             scanResult = announcementTable.scan(
@@ -88,10 +86,13 @@ def lambda_handler(event, context):
     
     try:
         response = handle_event(event)
+    except InputError as e:
+        logger.error("Invalid pagination_token received. Rethrowing error.")
+        raise e
     except Exception as e:
         logger.error("Error occured while handling event: " + repr(e))
-        response = build_response(statusCode=500, message="Internal Server Error")
+        raise Exception('Internal Server Error')
     
-    logger.info("Returning response: ", response)
+    logger.info("Returning response: "+ str(response))
 
     return response
