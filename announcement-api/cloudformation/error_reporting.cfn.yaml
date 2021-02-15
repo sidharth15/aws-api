@@ -5,10 +5,10 @@ Resources:
     Properties: 
       Code: 
         S3Bucket: "sidharthramesh"
-        S3Key: "ErrorReporting.zip"
+        S3Key: "error_reporting.zip"
       Description: "Error reporting lambda function - sends out email alerts to users through SNS"
       FunctionName: "error_reporting"
-      Handler: "ErrorReporting.lambda_handler"
+      Handler: "error_reporting.lambda_handler"
       Role: !GetAtt LambdaFunctionIAMRole.Arn
       Runtime: "python3.6"
       Timeout: 3

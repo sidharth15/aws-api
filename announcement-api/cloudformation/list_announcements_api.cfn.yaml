@@ -36,13 +36,29 @@ Resources:
           "application/json": "{ \"pagination_token\" : \"$input.params('pagination_token')\" }"
         IntegrationResponses:
           - ResponseTemplates:
-              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.message\", \"status\" : \"$inputRoot.statusCode\", \"announcements\" : [  #foreach($elem in $inputRoot.items){\"title\" : \"$elem.title\", \"date\" : \"$elem.date\" }  #if($foreach.hasNext),#end #end ], \"pagination_token\" : \"$inputRoot.pagination_token\" }"
+              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.message\", \"status\" : \"$inputRoot.statusCode\", \"announcements\" : [  #foreach($elem in $inputRoot.items){\"title\" : \"$elem.title\", \"date\" : \"$elem.date\" }  #if($foreach.hasNext),#end #end ], #if ($inputRoot.pagination_token != \"\") \"pagination_token\" : \"$inputRoot.pagination_token\" #end }"
             StatusCode: 200
+          - ResponseTemplates:
+              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.errorMessage\", \"status\" : 400 }"
+            SelectionPattern: ".*Invalid pagination_token.*"
+            StatusCode: 400
+          - ResponseTemplates:
+              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.errorMessage\", \"status\" : 500 }"
+            SelectionPattern: ".*Internal.*"
+            StatusCode: 500
       MethodResponses:
         - 
           ResponseModels:
             "application/json": !Ref SuccessResponseModel
           StatusCode: 200
+        -
+          ResponseModels:
+            "application/json": !Ref ErrorResponseModel
+          StatusCode: 400
+        -
+          ResponseModels:
+            "application/json": !Ref ErrorResponseModel
+          StatusCode: 500
 
   SuccessResponseModel:
     Type: "AWS::ApiGateway::Model"

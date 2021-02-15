@@ -44,10 +44,10 @@ Resources:
       TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/common/lambda_function.cfn.yaml"
       Parameters:
         FunctionName: "put_announcements_function"
-        FunctionHandler: "PutAnnouncement.lambda_handler"
+        FunctionHandler: "put_announcement.lambda_handler"
         FunctionRoleArn: !GetAtt LambdaFunctionIAMRole.Arn
         S3Bucket: "sidharthramesh"
-        S3Key: "PutAnnouncement.zip"
+        S3Key: "put_announcement.zip"
         ErrorReportingLambdaFunctionArn:
           Fn::GetAtt:
             - ErrorReportingStack
@@ -65,7 +65,7 @@ Resources:
   PutAnnouncementApi:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/api.cfn.yaml"
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/put_announcement_api.cfn.yaml"
       Parameters:
         LambdaFunctionName: 
           Fn::GetAtt:
@@ -82,10 +82,10 @@ Resources:
       TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/common/lambda_function.cfn.yaml"
       Parameters:
         FunctionName: "list_announcements_function"
-        FunctionHandler: "ListAnnouncements.lambda_handler"
+        FunctionHandler: "list_announcements.lambda_handler"
         FunctionRoleArn: !GetAtt LambdaFunctionIAMRole.Arn
         S3Bucket: "sidharthramesh"
-        S3Key: "ListAnnouncements.zip"
+        S3Key: "list_announcements.zip"
         ErrorReportingLambdaFunctionArn:
           Fn::GetAtt:
             - ErrorReportingStack
