@@ -29,7 +29,10 @@ Resources:
           date:
             type: string
             minLength: 1
-        required: ["title", "date"]
+          description:
+            type: string
+            minLength: 1
+        required: ["title", "date", "description"]
 
   MethodResponseModel:
     Type: "AWS::ApiGateway::Model"

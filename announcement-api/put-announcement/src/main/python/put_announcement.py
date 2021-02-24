@@ -6,6 +6,7 @@ import logging
 ANNOUNCEMENT_TABLE_NAME = "announcements"
 TITLE_ATTRIBUTE = "title"
 DATE_ATTRIBUTE = "date"
+DESCRIPTION_ATTRIBUTE = "description"
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -21,7 +22,8 @@ def handle_event(event):
     new_item = {
         "AnnouncementId": get_timestamp(),
         "title": event[TITLE_ATTRIBUTE],
-        "date": event[DATE_ATTRIBUTE]
+        "date": event[DATE_ATTRIBUTE],
+        "description": event[DESCRIPTION_ATTRIBUTE]
     }
         
     announcementTable.put_item(Item=new_item)

@@ -36,7 +36,7 @@ Resources:
           "application/json": "{ \"pagination_token\" : \"$input.params('pagination_token')\" }"
         IntegrationResponses:
           - ResponseTemplates:
-              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.message\", \"status\" : \"$inputRoot.statusCode\", \"announcements\" : [  #foreach($elem in $inputRoot.items){\"title\" : \"$elem.title\", \"date\" : \"$elem.date\" }  #if($foreach.hasNext),#end #end ] #if ($inputRoot.pagination_token != \"\") ,\"pagination_token\" : \"$inputRoot.pagination_token\" #end }"
+              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.message\", \"status\" : \"$inputRoot.statusCode\", \"announcements\" : [  #foreach($elem in $inputRoot.items){\"title\" : \"$elem.title\", \"date\" : \"$elem.date\", \"description\" : \"$elem.description\" }  #if($foreach.hasNext),#end #end ] #if ($inputRoot.pagination_token != \"\") ,\"pagination_token\" : \"$inputRoot.pagination_token\" #end }"
             StatusCode: 200
           - ResponseTemplates:
               "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.errorMessage\", \"status\" : 400 }"
@@ -85,7 +85,9 @@ Resources:
                   type: string
                 date:
                   type: string
-              required: [title, date]
+                description:
+                  type: string
+              required: [title, date, description]
           pagination_token:
             type: string
         required: [status, message]
