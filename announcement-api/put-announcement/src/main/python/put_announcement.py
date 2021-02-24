@@ -1,5 +1,5 @@
 import json
-import uuid
+import time
 import boto3
 import logging
 
@@ -14,9 +14,12 @@ logger.debug("Initializing lambda")
 dynamo = boto3.resource('dynamodb')
 announcementTable = dynamo.Table(ANNOUNCEMENT_TABLE_NAME)
 
+def get_timestamp():
+	return str(time.time()).replace('.', '')
+
 def handle_event(event):
     new_item = {
-        "AnnouncementId": str(uuid.uuid4()),
+        "AnnouncementId": get_timestamp(),
         "title": event[TITLE_ATTRIBUTE],
         "date": event[DATE_ATTRIBUTE]
     }
