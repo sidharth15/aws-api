@@ -2,9 +2,9 @@ openapi: "3.0.1"
 info:
   title: "PutAnnouncement API"
   description: "Api created using cloudformation"
-  version: "2021-02-11T08:40:54Z"
+  version: "2021-02-18T09:51:04Z"
 servers:
-- url: "https://msgfls6a57.execute-api.eu-west-1.amazonaws.com/{basePath}"
+- url: "https://006djh1hne.execute-api.eu-west-1.amazonaws.com/{basePath}"
   variables:
     basePath:
       default: "/develop"

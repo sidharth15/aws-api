@@ -76,11 +76,19 @@ Resources:
           - ResponseTemplates:
               "application/json": "#set($inputRoot = $input.path('$')){\"statusCode\" : \"$inputRoot.status\",\"messageFromLambda\" : \"$inputRoot.message\"}"
             StatusCode: 200
+          - ResponseTemplates:
+              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.errorMessage\", \"status\" : 500 }"
+            SelectionPattern: ".*Internal.*"
+            StatusCode: 500           
       MethodResponses:
         - 
           ResponseModels:
             "application/json": !Ref MethodResponseModel
           StatusCode: 200
+        - 
+          ResponseModels:
+            "application/json": !Ref MethodResponseModel
+          StatusCode: 500
   
   PutAnnouncementRequestValidator:
     Type: "AWS::ApiGateway::RequestValidator"
