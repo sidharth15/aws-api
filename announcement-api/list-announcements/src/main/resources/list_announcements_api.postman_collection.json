@@ -1,0 +1,75 @@
+{
+	"info": {
+		"_postman_id": "44b2550a-9234-46c6-9898-84e852fb5107",
+		"name": "ListAnnouncements API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get without pagination_token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{LIST_ANNOUNCEMENTS_API_URL}}/announcements",
+					"protocol": "https",
+					"host": [
+						"{{LIST_ANNOUNCEMENTS_API_URL}}"
+					],
+					"path": [
+						"announcements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get with valid token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{LIST_ANNOUNCEMENTS_API_URL}}/announcements?pagination_token={{PAGINATION_TOKEN}}",
+					"protocol": "https",
+					"host": [
+						"{{LIST_ANNOUNCEMENTS_API_URL}}"
+					],
+					"path": [
+						"announcements"
+					],
+					"query": [
+						{
+							"key": "pagination_token",
+							"value": "{{PAGINATION_TOKEN}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get with invalid token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{LIST_ANNOUNCEMENTS_API_URL}}/announcements?pagination_token=value",
+					"protocol": "https",
+					"host": [
+						"{{LIST_ANNOUNCEMENTS_API_URL}}"
+					],
+					"path": [
+						"announcements"
+					],
+					"query": [
+						{
+							"key": "pagination_token",
+							"value": "value"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
