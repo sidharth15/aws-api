@@ -74,7 +74,7 @@ Resources:
           "application/json": "#set($inputRoot = $input.path('$')) { \"title\" : \"$inputRoot.title\", \"date\" : \"$inputRoot.date\"}"
         IntegrationResponses:
           - ResponseTemplates:
-              "application/json": "#set($inputRoot = $input.path('$')){\"statusCode\" : \"$inputRoot.status\",\"messageFromLambda\" : \"$inputRoot.message\"}"
+              "application/json": "#set($inputRoot = $input.path('$')){\"status\" : \"$inputRoot.status\",\"message\" : \"$inputRoot.message\"}"
             StatusCode: 200
           - ResponseTemplates:
               "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.errorMessage\", \"status\" : 500 }"
