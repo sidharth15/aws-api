@@ -1,0 +1,234 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  PutAnnouncementLambdaFunctionName:
+    Type: String
+  PutAnnouncementLambdaFunctionArn:
+    Type: String
+  ListAnnouncementsLambdaFunctionName:
+    Type: String
+  ListAnnouncementsLambdaFunctionArn:
+    Type: String
+Resources:
+  AnnouncementAPI:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "announcement api"
+      Description: "Api created using cloudformation"
+
+  # Resources defined for the api
+  # /announcements
+  AnnouncementsResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref AnnouncementAPI
+      ParentId: !GetAtt AnnouncementAPI.RootResourceId
+      PathPart: announcements
+  
+  # /announcement
+  AnnouncementResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref AnnouncementAPI
+      ParentId: !GetAtt AnnouncementAPI.RootResourceId
+      PathPart: announcement
+
+  # list_announcements method
+  AnnouncementsGetMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      HttpMethod: GET
+      ResourceId: !Ref AnnouncementsResource
+      RestApiId: !Ref AnnouncementAPI
+      AuthorizationType: NONE
+      RequestParameters:
+        method.request.querystring.pagination_token: false
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Join [ "", [ "arn:aws:apigateway:", !Ref "AWS::Region", ":lambda:path/2015-03-31/functions/", !Ref ListAnnouncementsLambdaFunctionArn, "/invocations" ] ]
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": "{ \"pagination_token\" : \"$input.params('pagination_token')\" }"
+        IntegrationResponses:
+          - ResponseTemplates:
+              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.message\", \"status\" : \"$inputRoot.statusCode\", \"announcements\" : [  #foreach($elem in $inputRoot.items){\"title\" : \"$elem.title\", \"date\" : \"$elem.date\", \"description\" : \"$elem.description\" }  #if($foreach.hasNext),#end #end ] #if ($inputRoot.pagination_token != \"\") ,\"pagination_token\" : \"$inputRoot.pagination_token\" #end }"
+            StatusCode: 200
+          - ResponseTemplates:
+              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.errorMessage\", \"status\" : 400 }"
+            SelectionPattern: ".*Invalid pagination_token.*"
+            StatusCode: 400
+          - ResponseTemplates:
+              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.errorMessage\", \"status\" : 500 }"
+            SelectionPattern: ".*Internal.*"
+            StatusCode: 500
+      MethodResponses:
+        - 
+          ResponseModels:
+            "application/json": !Ref AnnouncementsResponseModel
+          StatusCode: 200
+        -
+          ResponseModels:
+            "application/json": !Ref GenericResponseModel
+          StatusCode: 400
+        -
+          ResponseModels:
+            "application/json": !Ref GenericResponseModel
+          StatusCode: 500
+  
+  # put_announcement method
+  AnnouncementPostMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref AnnouncementResource
+      RestApiId: !Ref AnnouncementAPI
+      AuthorizationType: NONE
+      RequestModels:
+        "application/json": !Ref AnnouncementRequestModel
+      RequestValidatorId: !Ref PutAnnouncementRequestValidator
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        Uri: !Join [ "", [ "arn:aws:apigateway:", !Ref "AWS::Region", ":lambda:path/2015-03-31/functions/", !Ref PutAnnouncementLambdaFunctionArn, "/invocations" ] ]
+        PassthroughBehavior: WHEN_NO_TEMPLATES
+        RequestTemplates:
+          "application/json": "#set($inputRoot = $input.path('$')) { \"title\" : \"$inputRoot.title\", \"date\" : \"$inputRoot.date\", \"description\" : \"$inputRoot.description\"}"
+        IntegrationResponses:
+          - ResponseTemplates:
+              "application/json": "#set($inputRoot = $input.path('$')){\"status\" : \"$inputRoot.status\",\"message\" : \"$inputRoot.message\"}"
+            StatusCode: 200
+          - ResponseTemplates:
+              "application/json": "#set($inputRoot = $input.path('$')) { \"message\" : \"$inputRoot.errorMessage\", \"status\" : 500 }"
+            SelectionPattern: ".*Internal.*"
+            StatusCode: 500           
+      MethodResponses:
+        - 
+          ResponseModels:
+            "application/json": !Ref GenericResponseModel
+          StatusCode: 200
+        - 
+          ResponseModels:
+            "application/json": !Ref GenericResponseModel
+          StatusCode: 500
+
+  # list_announcements response model
+  AnnouncementsResponseModel:
+    Type: "AWS::ApiGateway::Model"
+    Properties:
+      ContentType: "application/json"
+      Name: "AnnouncementsResponseModel"
+      RestApiId: !Ref AnnouncementAPI
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: announcements_response_model
+        type: object
+        additionalProperties: false
+        properties:
+          status:
+            type: string
+          message:
+            type: string
+          announcements:
+            type: array
+            items:
+              type: object
+              properties:
+                title:
+                  type: string
+                date:
+                  type: string
+                description:
+                  type: string
+              required: [title, date, description]
+          pagination_token:
+            type: string
+        required: [status, message]
+
+  # put_announcement request-body model
+  AnnouncementRequestModel:
+    Type: "AWS::ApiGateway::Model"
+    Properties:
+      ContentType: "application/json"
+      Name: "AnnouncementRequestModel"
+      RestApiId: !Ref AnnouncementAPI
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: announcement_request_model
+        type: object
+        additionalProperties: false
+        properties:
+          title:
+            type: string
+            minLength: 1
+          date:
+            type: string
+            minLength: 1
+          description:
+            type: string
+            minLength: 1
+        required: ["title", "date", "description"]
+
+  # generic response model with message and status attributes
+  GenericResponseModel:
+    Type: "AWS::ApiGateway::Model"
+    Properties:
+      ContentType: "application/json"
+      Name: "GenericResponseModel"
+      RestApiId: !Ref AnnouncementAPI
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: generic_response_model
+        type: object
+        additionalProperties: false
+        properties:
+          status:
+            type: string
+          message:
+            type: string
+        required: [status, message]
+  
+  # to validate input body for put_announcement request
+  PutAnnouncementRequestValidator:
+    Type: "AWS::ApiGateway::RequestValidator"
+    Properties:
+      Name: put-announcement-request-validator
+      RestApiId: !Ref AnnouncementAPI
+      ValidateRequestBody: true
+
+  # develop stage for announcement api
+  AnnouncementAPIStage:
+    Type: "AWS::ApiGateway::Stage"
+    Properties:
+      DeploymentId: !Ref AnnouncementAPIDeployment
+      Description: "Develop stage created in CloudFormation"
+      RestApiId: !Ref AnnouncementAPI
+      StageName: "develop"
+  
+  # deploy announcement api develop stage
+  AnnouncementAPIDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    Properties:
+      Description: "AnnouncementAPI Deployment"
+      RestApiId: !Ref AnnouncementAPI
+    DependsOn: AnnouncementsGetMethod
+
+  # permission to allow api gateway to invoke list_announcements function
+  ListAnnouncementLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:invokeFunction
+      FunctionName: !Ref ListAnnouncementsLambdaFunctionName
+      Principal: apigateway.amazonaws.com
+  
+  # permission to allow api gateway to invoke put_announcement function
+  PutAnnouncementLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:invokeFunction
+      FunctionName: !Ref PutAnnouncementLambdaFunctionName
+      Principal: apigateway.amazonaws.com
+
+Outputs:
+  ApiUrl:
+    Description: "The endpoint URL exposed by API Gateway"
+    Value: !Sub "https://${AnnouncementAPI}.execute-api.${AWS::Region}.amazonaws.com/${AnnouncementAPIStage}"

@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Resources:
+  # DynamoDB table to store announcements
   AnnouncementsTable:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -7,6 +8,7 @@ Resources:
       Parameters:
         TableName: "announcements"
 
+  # common IAM role used by both lambda functions
   LambdaFunctionIAMRole:
     Type: AWS::IAM::Role
     Properties:
@@ -34,8 +36,15 @@ Resources:
                 Resource: '*'
               
               - Effect: Allow
-                Action: "dynamodb:*"
-                Resource: "*"
+                Action: 
+                  - "dynamodb:PutItem"
+                  - "dynamodb:Scan"
+                  - "dynamodb:GetItem"
+                Resource: 
+                  Fn::GetAtt:
+                    - AnnouncementsTable
+                    - Outputs.TableArn
+                  #'Fn::Join': ['/', [!Join [':',['arn:aws:dynamodb', !Ref 'AWS::Region', !Ref 'AWS::AccountId', 'table']] ,!Ref AnnouncementsTable]]
       RoleName: LambdaToDynamoDbAccessRole
   
   PutAnnouncementLambdaFunction:
@@ -57,24 +66,13 @@ Resources:
             - ErrorReportingStack
             - Outputs.ErrorReportingLambdaFunctionName
 
+  # creates an sns topic with email subscription
+  # and a Lambda function that publishes to this topic
+  # when an error is found in the linked log groups
   ErrorReportingStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/error_reporting.cfn.yaml"
-
-  PutAnnouncementApi:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/put_announcement_api.cfn.yaml"
-      Parameters:
-        LambdaFunctionName: 
-          Fn::GetAtt:
-            - PutAnnouncementLambdaFunction
-            - Outputs.FunctionName
-        LambdaFunctionArn:
-          Fn::GetAtt:
-            - PutAnnouncementLambdaFunction
-            - Outputs.FunctionArn
     
   ListAnnouncementsLambdaFunction:
     Type: AWS::CloudFormation::Stack
@@ -94,32 +92,34 @@ Resources:
           Fn::GetAtt:
             - ErrorReportingStack
             - Outputs.ErrorReportingLambdaFunctionName
-    
-  ListAnnouncementsAPI:
+  
+  # API Gateway REST api
+  AnnouncementAPI:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/list_announcements_api.cfn.yaml"
+      TemplateURL: "https://sidharthramesh.s3-eu-west-1.amazonaws.com/announcement_api.cfn.yaml"
       Parameters:
-        LambdaFunctionName: 
+        PutAnnouncementLambdaFunctionName: 
+          Fn::GetAtt:
+            - PutAnnouncementLambdaFunction
+            - Outputs.FunctionName
+        PutAnnouncementLambdaFunctionArn:
+          Fn::GetAtt:
+            - PutAnnouncementLambdaFunction
+            - Outputs.FunctionArn
+        ListAnnouncementsLambdaFunctionName: 
           Fn::GetAtt:
             - ListAnnouncementsLambdaFunction
             - Outputs.FunctionName
-        LambdaFunctionArn:
+        ListAnnouncementsLambdaFunctionArn:
           Fn::GetAtt:
             - ListAnnouncementsLambdaFunction
             - Outputs.FunctionArn
 
 Outputs:
-  PutAnnouncementEndpointURL:
-    Description: "Endpoint URL for put-announcement API exposed by API Gateway"
-    Value: 
-      Fn::GetAtt:
-        - PutAnnouncementApi
-        - Outputs.ApiUrl
-
   ListAnnouncementsEndpointURL:
     Description: "Endpoint URL for list-announcements API exposed by API Gateway"
     Value: 
       Fn::GetAtt:
-        - ListAnnouncementsAPI
+        - AnnouncementAPI
         - Outputs.ApiUrl

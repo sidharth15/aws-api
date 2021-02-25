@@ -24,6 +24,5 @@ Resources:
           Key: "Name"
           Value: !Ref TableName
 Outputs:
-  TableName:
-    Value:
-      Ref: AnnouncementTable
+  TableArn:
+    Value: !GetAtt AnnouncementTable.Arn
