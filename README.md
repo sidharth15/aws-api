@@ -11,3 +11,6 @@ However, please note that the source code S3 bucket referred in this project is 
 
 # Usage
 The micrservice consists of two separate APIs - put_announcement and list_announcements. After deploying the main cloudformation stack, the endpoint URLs of the two APIs are available in the 'Outputs' section of the main stack.
+
+# Wiki
+Please find the wiki [here](https://github.com/sidharth15/aws-api/wiki)
