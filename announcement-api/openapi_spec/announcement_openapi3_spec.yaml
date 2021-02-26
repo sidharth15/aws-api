@@ -1,0 +1,119 @@
+openapi: "3.0.1"
+info:
+  title: "announcement api"
+  description: "Api created using cloudformation"
+  version: "2021-02-25T14:59:54Z"
+servers:
+- url: "https://dmlewgdc78.execute-api.eu-west-1.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: "/develop"
+paths:
+  /announcement:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnnouncementRequestModel"
+        required: true
+      responses:
+        "500":
+          description: "500 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponseModel"
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponseModel"
+  /announcements:
+    get:
+      parameters:
+      - name: "pagination_token"
+        in: "query"
+        schema:
+          type: "string"
+      responses:
+        "400":
+          description: "400 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponseModel"
+        "500":
+          description: "500 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponseModel"
+        "200":
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnnouncementsResponseModel"
+components:
+  schemas:
+    AnnouncementsResponseModel:
+      title: "announcements_response_model"
+      required:
+      - "message"
+      - "status"
+      type: "object"
+      properties:
+        pagination_token:
+          type: "string"
+        message:
+          type: "string"
+        announcements:
+          type: "array"
+          items:
+            required:
+            - "date"
+            - "description"
+            - "title"
+            type: "object"
+            properties:
+              date:
+                type: "string"
+              description:
+                type: "string"
+              title:
+                type: "string"
+        status:
+          type: "string"
+      additionalProperties: false
+    GenericResponseModel:
+      title: "generic_response_model"
+      required:
+      - "message"
+      - "status"
+      type: "object"
+      properties:
+        message:
+          type: "string"
+        status:
+          type: "string"
+      additionalProperties: false
+    AnnouncementRequestModel:
+      title: "announcement_request_model"
+      required:
+      - "date"
+      - "description"
+      - "title"
+      type: "object"
+      properties:
+        date:
+          minLength: 1
+          type: "string"
+        description:
+          minLength: 1
+          type: "string"
+        title:
+          minLength: 1
+          type: "string"
+      additionalProperties: false

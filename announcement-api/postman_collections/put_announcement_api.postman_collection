@@ -20,10 +20,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://{{PUT_ANNOUNCEMENT_API_URL}}/announcement",
+					"raw": "https://{{ANNOUNCEMENT_API_URL}}/announcement",
 					"protocol": "https",
 					"host": [
-						"{{PUT_ANNOUNCEMENT_API_URL}}"
+						"{{ANNOUNCEMENT_API_URL}}"
 					],
 					"path": [
 						"announcement"
@@ -47,10 +47,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://{{PUT_ANNOUNCEMENT_API_URL}}/announcement",
+					"raw": "https://{{ANNOUNCEMENT_API_URL}}/announcement",
 					"protocol": "https",
 					"host": [
-						"{{PUT_ANNOUNCEMENT_API_URL}}"
+						"{{ANNOUNCEMENT_API_URL}}"
 					],
 					"path": [
 						"announcement"
@@ -74,10 +74,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://{{PUT_ANNOUNCEMENT_API_URL}}/announcement",
+					"raw": "https://{{ANNOUNCEMENT_API_URL}}/announcement",
 					"protocol": "https",
 					"host": [
-						"{{PUT_ANNOUNCEMENT_API_URL}}"
+						"{{ANNOUNCEMENT_API_URL}}"
 					],
 					"path": [
 						"announcement"
@@ -101,10 +101,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://{{PUT_ANNOUNCEMENT_API_URL}}/announcement",
+					"raw": "https://{{ANNOUNCEMENT_API_URL}}/announcement",
 					"protocol": "https",
 					"host": [
-						"{{PUT_ANNOUNCEMENT_API_URL}}"
+						"{{ANNOUNCEMENT_API_URL}}"
 					],
 					"path": [
 						"announcement"

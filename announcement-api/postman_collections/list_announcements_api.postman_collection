@@ -11,10 +11,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://{{LIST_ANNOUNCEMENTS_API_URL}}/announcements",
+					"raw": "https://{{ANNOUNCEMENT_API_URL}}/announcements",
 					"protocol": "https",
 					"host": [
-						"{{LIST_ANNOUNCEMENTS_API_URL}}"
+						"{{ANNOUNCEMENT_API_URL}}"
 					],
 					"path": [
 						"announcements"
@@ -29,10 +29,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://{{LIST_ANNOUNCEMENTS_API_URL}}/announcements?pagination_token={{PAGINATION_TOKEN}}",
+					"raw": "https://{{ANNOUNCEMENT_API_URL}}/announcements?pagination_token=ENTER_VALID_PAGINATION_TOKEN_HERE",
 					"protocol": "https",
 					"host": [
-						"{{LIST_ANNOUNCEMENTS_API_URL}}"
+						"{{ANNOUNCEMENT_API_URL}}"
 					],
 					"path": [
 						"announcements"
@@ -40,7 +40,7 @@
 					"query": [
 						{
 							"key": "pagination_token",
-							"value": "{{PAGINATION_TOKEN}}"
+							"value": "ENTER_VALID_PAGINATION_TOKEN_HERE"
 						}
 					]
 				}
@@ -53,10 +53,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://{{LIST_ANNOUNCEMENTS_API_URL}}/announcements?pagination_token=value",
+					"raw": "https://{{ANNOUNCEMENT_API_URL}}/announcements?pagination_token=invalid_pagination_token",
 					"protocol": "https",
 					"host": [
-						"{{LIST_ANNOUNCEMENTS_API_URL}}"
+						"{{ANNOUNCEMENT_API_URL}}"
 					],
 					"path": [
 						"announcements"
@@ -64,7 +64,7 @@
 					"query": [
 						{
 							"key": "pagination_token",
-							"value": "value"
+							"value": "invalid_pagination_token"
 						}
 					]
 				}
